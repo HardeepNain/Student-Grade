@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student's Grades</title>
+    <style>
+      body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+#app {
+    width: 400px;
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+h2 {
+    color: #bb86fc;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label, button {
+    display: block;
+    margin-top: 10px;
+}
+
+label {
+    font-weight: bold;
+    color: #e0e0e0;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #3a3a3a;
+    border-radius: 5px;
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+button {
+    width: 100px;
+    padding: 10px;
+    margin-top: 5px;
+    cursor: pointer;
+    background-color: #bb86fc;
+    color: #121212;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #9c64e2;
+}
+
+#grades-table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+}
+
+#grades-table, th, td {
+    border: 1px solid #3a3a3a;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    color: #e0e0e0;
+}
+
+#average {
+    color: #ff6e6e;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 1.2em;
+}
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <h2>Student's Grades</h2>
+    <label>
+        Course Name:
+        <input type="text" id="courseName">
+    </label>
+    <label>
+        Grade:
+        <input type="number" id="grade">
+    </label>
+    <button onclick="addGrade()">Add</button>
+    <button onclick="deleteGrade()">Delete</button>
+    <button onclick="calculateAverage()">Average</button>
+    <button onclick="resetGrades()">Reset</button>
+
+    <table id="grades-table">
+        <tr>
+            <th>Course Name</th>
+            <th>Grade</th>
+        </tr>
+    </table>
+
+    <div id="average">Average: N/A</div>
+</div>
+
+<script>
+    const courses = {};
+
+    function addGrade() {
+        const courseName = document.getElementById("courseName").value.trim();
+        const grade = parseFloat(document.getElementById("grade").value.trim());
+
+        if (!courseName) {
+            alert("Course name cannot be empty.");
+            return;
+        }
+        if (isNaN(grade)) {
+            alert("Please enter a valid grade.");
+            return;
+        }
+        if (courses[courseName]) {
+            alert("Course already exists.");
+            return;
+        }
+
+        courses[courseName] = grade;
+        updateDisplay();
+        clearInputs();
+    }
+
+    function deleteGrade() {
+        const courseName = document.getElementById("courseName").value.trim();
+
+        if (courses[courseName]) {
+            delete courses[courseName];
+            updateDisplay();
+            clearInputs();
+        } else {
+            alert("Course not found.");
+        }
+    }
+
+    function calculateAverage() {
+        const grades = Object.values(courses);
+        if (grades.length === 0) {
+            document.getElementById("average").innerText = "Average: N/A";
+            return;
+        }
+        const average = grades.reduce((sum, grade) => sum + grade, 0) / grades.length;
+        document.getElementById("average").innerText = `Average: ${average.toFixed(2)}`;
+    }
+
+    function resetGrades() {
+        for (let key in courses) delete courses[key];
+        updateDisplay();
+        document.getElementById("average").innerText = "Average: N/A";
+    }
+
+    function updateDisplay() {
+        const table = document.getElementById("grades-table");
+        table.innerHTML = "<tr><th>Course Name</th><th>Grade</th></tr>";
+        for (let [course, grade] of Object.entries(courses)) {
+            const row = table.insertRow();
+            const courseCell = row.insertCell(0);
+            const gradeCell = row.insertCell(1);
+            courseCell.textContent = course;
+            gradeCell.textContent = grade;
+        }
+    }
+
+    function clearInputs() {
+        document.getElementById("courseName").value = "";
+        document.getElementById("grade").value = "";
+    }
+</script>
+
+</body>
+</html>
